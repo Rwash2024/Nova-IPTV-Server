@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>نوفا السيرفر الأصلي</title>
+  <style>
+    :root {
+      --bg: #000; --panel: #0b0b0b; --muted:#bfbfbf; --text:#f3f3f3; --line:#1e1e1e; --accent:#facc15; /* yellow-400 */
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Tahoma, Arial, "Noto Kufi Arabic", "Cairo", sans-serif; background:var(--bg); color:var(--text); }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1200px, 92vw); margin-inline: auto; }
+
+    /* Header */
+    header { position: sticky; top:0; z-index: 50; backdrop-filter: blur(6px); background: rgba(0,0,0,0.85); border-bottom:1px solid var(--line); }
+    .nav { display:flex; align-items:center; justify-content:space-between; padding:14px 0; }
+    .brand { display:flex; align-items:center; gap:10px; }
+    .brand img { height:40px; width:auto; border-radius:8px; }
+    .brand b { color: var(--accent); font-size: 18px; }
+    .links { display:flex; gap:16px; font-size:14px; }
+    .links a:hover { color: var(--accent); }
+
+    /* Hero with cover */
+    .hero { position:relative; min-height: 64svh; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden; }
+    .hero::before { content: ""; position:absolute; inset:0; background:url('cover.jpg') center/cover no-repeat; filter: brightness(0.45); }
+    .hero .inner { position:relative; padding: clamp(24px, 6vw, 48px); }
+    .title { font-weight:800; font-size: clamp(26px, 3.4vw, 44px); margin:0 0 10px; }
+    .title span { color: var(--accent); }
+    .points { list-style: none; padding:0; margin: 10px auto 18px; max-width: 900px; text-align: start; line-height: 1.8; color: var(--muted); }
+    .points li { position:relative; padding-inline-start: 22px; }
+    .points li::before { content:"•"; color: var(--accent); font-weight:bold; position:absolute; inset-inline-start:0; }
+    .cta { display:inline-block; background: var(--accent); color:#000; padding: 10px 20px; border-radius: 999px; font-weight:600; }
+    .cta:hover { filter: brightness(0.95); }
+
+    /* Why */
+    section { padding: 56px 0; }
+    h3.section-title { color: var(--accent); font-size: 22px; text-align:center; margin:0 0 24px; }
+    .why-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap:18px; }
+    .card { background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.0)); border:1px solid var(--line); border-radius: 22px; padding:18px; }
+    .card-top { display:flex; align-items:center; justify-content: space-between; margin-bottom: 8px; }
+    .card h4 { margin:0; color:#7dd3fc; font-size: 16px; }
+    .icon { width:28px; height:28px; fill: var(--accent); }
+    .card p { margin:0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+
+    /* Pricing */
+    .pricing-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(230px,1fr)); gap:18px; }
+    .plan { border:1px solid rgba(250,204,21,0.5); background: #0a0a0a; border-radius:18px; padding:18px; box-shadow: 0 0 0 1px rgba(250,204,21,0.15) inset; }
+    .plan .row { display:flex; align-items:baseline; justify-content: space-between; margin-bottom:10px; }
+    .plan .name { font-weight:700; }
+    .plan .price { color: var(--accent); font-size:22px; font-weight:800; }
+    .plan ul { list-style:none; padding:0; margin: 12px 0 16px; color: var(--muted); font-size:14px; }
+    .plan li { display:flex; align-items:center; gap:8px; }
+    .dot { width:6px; height:6px; border-radius:999px; background: var(--accent); display:inline-block; }
+    .btn { display:block; width:100%; background: var(--accent); color:#000; border:0; border-radius: 999px; padding:10px; font-weight:700; cursor:pointer; }
+    .btn:hover { filter: brightness(0.95); }
+
+    /* Contact */
+    .contact form { display:grid; grid-template-columns:1fr; gap:10px; max-width:760px; margin: 0 auto; }
+    @media (min-width: 768px) { .contact form { grid-template-columns: 1fr 1fr; } .contact form .full { grid-column: 1 / -1; } }
+    .input, textarea { background:#0e0e0e; border:1px solid var(--line); color:var(--text); border-radius: 14px; padding:12px; font: inherit; }
+    textarea { min-height:120px; }
+
+    /* Footer */
+    footer { border-top:1px solid var(--line); color:#9ca3af; text-align:center; padding:20px 0; font-size: 14px; }
+
+    /* Modal */
+    .modal-backdrop { position:fixed; inset:0; background: rgba(0,0,0,0.7); display:none; align-items:center; justify-content:center; padding:18px; z-index:60; }
+    .modal { background:#0b0b0b; border:1px solid var(--line); border-radius:20px; padding:18px; width:min(520px, 96vw); }
+    .modal .row { display:flex; align-items:center; justify-content: space-between; margin-bottom:10px; }
+    .pill { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px; border-radius: 14px; border:1px solid var(--line); background: #0f0f0f; }
+    .pill:hover { background:#131313; }
+    .is-open { display:flex; }
+
+    /* Scroll-to-top */
+    .scrolltop { position:fixed; left: 16px; bottom: 16px; z-index:55; display:none; }
+    .scrolltop button { background: var(--accent); color:#000; border:0; border-radius:999px; width:44px; height:44px; font-size:18px; box-shadow: 0 8px 24px rgba(0,0,0,0.35); cursor:pointer; }
+    .scrolltop.show { display:block; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <img src="nova-logo.jpg" alt="نوفا - السيرفر الأصلي" />
+        <b>نوفا - السيرفر الأصلي</b>
+      </div>
+      <nav class="links">
+        <a href="#pricing">الأسعار</a>
+        <a href="#why">ليه تشترك؟</a>
+        <a href="#contact">التواصل</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero (with cover) -->
+  <section class="hero">
+    <div class="inner container">
+      <h1 class="title">نوفا - السيرفر الأصلي <span></h1>
+      <ul class="points">
+        <li>تعالى بقى نقولك نوفا الأصلي عبارة عن ايه؟ أكبر مكتبة من القنوات العالمية الرياضية.</li>
+        <li>يعني هتشاهد المباريات الأفريقية والعالمية وانت في بيتك بدون الاحتياج للنزول لأي مكان.</li>
+        <li>للعملاء الجدد اللي ما يعرفوش يعني ايه سيرفر نوفا: ده سيرفر للأجهزة اللي بتتصل بالنت.</li>
+        <li>زي الريسيفر، أو الموبايل، أو التاب، أو الكمبيوتر، أو اللابتوب، أو الشاشات السمارت أو الأندرويد.</li>
+      </ul>
+      <a href="#subscribe" class="cta" id="open-modal">اشترك الآن</a>
+    </div>
+  </section>
+
+  <!-- Why -->
+  <section id="why">
+    <div class="container">
+      <h3 class="section-title">ليه تشترك في سيرفر نوفا الاصلي؟</h3>
+      <div class="why-grid">
+        <div class="card">
+          <div class="card-top"><h4>محتوى آمن</h4><svg class="icon" viewBox="0 0 24 24"><path d="M12 2l7 4v6c0 5-3.8 9.4-7 10-3.2-.6-7-5-7-10V6l7-4zM7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+          <p>السيرفر خالي من أي مواد إيحائية لتجربة عائلية آمنة.</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><h4>أكبر مكتبة ترفيهية</h4><svg class="icon" viewBox="0 0 24 24"><path d="M3 5h18v14H3zM8 5v14M16 5v14" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+          <p>جميع الباقات الرياضية والترفيهية وأكثر من 20,000 فيلم ومسلسل.</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><h4>تقسيمة مميزة</h4><svg class="icon" viewBox="0 0 24 24"><path d="M3 3h8v8H3zM13 3h8v8h-8zM3 13h8v8H3zM13 13h8v8h-8z"/></svg></div>
+          <p>محتوى منظم يسهل البحث والوصول السريع.</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><h4>أفضل سعر</h4><svg class="icon" viewBox="0 0 24 24"><path d="M12 1v22M5 6h7a4 4 0 110 8H6" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+          <p>قيمة ممتازة مقابل الخدمة والدعم.</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><h4>سيرفرات سريعة</h4><svg class="icon" viewBox="0 0 24 24"><path d="M2 12h14l-4 4m4-4l-4-4M6 20h12" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+          <p>أداء ثابت وقت الضغط وبدون تقطيع.</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><h4>طلبات المحتوى</h4><svg class="icon" viewBox="0 0 24 24"><path d="M4 4h16v14H7l-3 3z" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+          <p>اطلب فيلم أو مسلسل غير متوفر ونرفعه خلال يومين كحدّ أقصى.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing">
+    <div class="container">
+      <h3 class="section-title">باقات بسيطة وواضحة</h3>
+      <div class="pricing-grid">
+        <div class="plan"><div class="row"><span class="name">التجربة</span><span class="price">مجاناً</span></div><ul><li><span class="dot"></span>تجربة مجانية</li><li><span class="dot"></span>دون التزام</li><li><span class="dot"></span>اكتشف الخدمة بنفسك</li></ul><button class="btn" data-open>اشترك الآن</button></div>
+        <div class="plan"><div class="row"><span class="name">90 يوم</span><span class="price">175 ج.م <small></small></span></div><ul><li><span class="dot"></span>صلاحية 3 أشهر</li><li><span class="dot"></span>دعم كامل</li><li><span class="dot"></span>تحديثات مستمرة</li></ul><button class="btn" data-open>اشترك الآن</button></div>
+        <div class="plan"><div class="row"><span class="name">180 يوم</span><span class="price">250 ج.م <small></small></span></div><ul><li><span class="dot"></span>صلاحية 6 أشهر</li><li><span class="dot"></span>دعم كامل</li><li><span class="dot"></span>تحديثات مستمرة</li></ul><button class="btn" data-open>اشترك الآن</button></div>
+        <div class="plan"><div class="row"><span class="name">365 يوم</span><span class="price">400 ج.م <small></small></span></div><ul><li><span class="dot"></span>صلاحية سنة كاملة</li><li><span class="dot"></span>أفضل سعر</li><li><span class="dot"></span>دعم مستمر</li></ul><button class="btn" data-open>اشترك الآن</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <h3 class="section-title">تواصل معنا</h3>
+      <form>
+        <input class="input" placeholder="الاسم" />
+        <input class="input" placeholder="البريد الإلكتروني" />
+        <input class="input full" placeholder="الموضوع" />
+        <textarea class="full" placeholder="رسالتك"></textarea>
+        <button class="btn full" type="button" data-open>إرسال</button>
+      </form>
+      <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:10px">بالنقر على إرسال، فأنت توافق على سياسة الخصوصية وشروط الخدمة.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    © <span id="y"></span> نوفا السيرفر الأصلي — جميع الحقوق محفوظة (Mohamed Rwash).
+  </footer>
+
+  <!-- Modal: الاشتراك -->
+  <div class="modal-backdrop" id="subscribe">
+    <div class="modal">
+      <div class="row">
+        <h4 style="margin:0">تفاصيل الاشتراك</h4>
+        <button id="close" aria-label="إغلاق" style="background:none;border:0;color:#9ca3af;cursor:pointer;font-size:20px">✕</button>
+      </div>
+      <p style="color:var(--muted);margin:0 0 12px">اختر وسيلة التواصل المفضلة لديك لإتمام الاشتراك:</p>
+      <div class="grid" style="display:grid; gap:10px">
+        <a class="pill" href="https://wa.me/201022097217" target="_blank" rel="noopener">واتساب <b>01022097217</b></a>
+        <a class="pill" href="tel:01022097217">اتصال مباشر <b>01022097217</b></a>
+        <a class="pill" href="mailto:mohamed.adel.rwash@gmail.com">البريد الإلكتروني <b>mohamed.adel.rwash@gmail.com</b></a>
+      </div>
+      <p style="color:#6b7280;font-size:12px;margin-top:10px">* بدّل البريد بعنوانك الفعلي إذا لزم.</p>
+    </div>
+  </div>
+
+  <!-- Scroll-to-top -->
+  <div class="scrolltop" id="scrolltop"><button aria-label="الرجوع للأعلى">⬆️</button></div>
+
+  <script>
+    // Year
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Modal open/close
+    const modal = document.getElementById('subscribe');
+    const openers = document.querySelectorAll('[data-open], #open-modal');
+    const closeBtn = document.getElementById('close');
+    openers.forEach(el => el.addEventListener('click', () => modal.classList.add('is-open')));
+    closeBtn.addEventListener('click', () => modal.classList.remove('is-open'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('is-open'); });
+
+    // Scroll-to-top
+    const st = document.getElementById('scrolltop');
+    window.addEventListener('scroll', () => { st.classList.toggle('show', window.scrollY > 300); });
+    st.querySelector('button').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+  </script>
+</body>
+</html>
